@@ -1,7 +1,7 @@
 
 #
 # The program picks a random number between 1 and 10.
-# You get three guess to find the secret number. If
+# You get three guesses to find the secret number. If
 # your guess is wrong, the program let's you know if
 # your guess was too low or too high.
 #
@@ -40,7 +40,7 @@ def question_prompt(msg):
 def play():
     secret = random.randint(1, 10)
     for trial in range(1, 4):
-        guess = number_prompt("Pick a number between {} and {}: ".format(MIN,MAX))
+        guess = number_prompt("Guess a number between {0} and {1}: ".format(MIN,MAX))
         if guess < secret:
             print("Sorry, your guess was too low.")
         elif guess > secret:
