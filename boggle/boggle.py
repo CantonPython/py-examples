@@ -44,6 +44,15 @@ def solve(board):
             found[word] = path
     return found
 
-# board = new_board()
-# found = solve(board)
-# show(board)
+if __name__ == '__main__':
+    board = new_board()
+    show(board)
+    guess = set()
+    while True:
+        w = input("boggle> ").strip()
+        if not w:
+            break
+        guess.add(w)
+    solution = set(solve(board).keys())
+    print("found: ", guess & solution)
+    print("missed: ", solution - guess)
