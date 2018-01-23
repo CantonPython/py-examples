@@ -48,11 +48,15 @@ if __name__ == '__main__':
     board = new_board()
     show(board)
     guess = set()
+    print('? = show board, . = quit')
     while True:
         w = input("boggle> ").strip()
-        if not w:
+        if w == '.':
             break
-        guess.add(w)
+        elif w == '?':
+            show(board)
+        else:
+            guess.add(w)
     solution = set(solve(board).keys())
     print("found: ", guess & solution)
     print("missed: ", solution - guess)
