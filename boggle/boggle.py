@@ -2,11 +2,42 @@ from __future__ import print_function
 import string
 import random
 import words
-import const
+
+# 4 x 4 adjacency table
+#   0   1   2   3
+#   4   5   6   7
+#   8   9  10  11
+#  12  13  14  15
+adjacent = {
+    0: (1, 4, 5),
+    1: (0, 2, 4, 5, 6),
+    2: (1, 3, 5, 6, 7),
+    3: (2, 6, 7),
+    4: (0, 1, 5, 8, 9),
+    5: (0, 1, 2, 4, 6, 8, 9, 10),
+    6: (1, 2, 3, 5, 7, 9, 10, 11),
+    7: (2, 3, 6, 10, 11),
+    8: (4, 5, 9, 12, 13),
+    9: (4, 5, 6, 8, 10, 12, 13, 14),
+    10: (5, 6, 7, 9, 11, 13, 14, 15),
+    11: (6, 7, 10, 14, 15),
+    12: (8, 9, 13),
+    13: (8, 9, 10, 12, 14),
+    14: (9, 10, 11, 13, 15),
+    15: (10, 11, 14),
+}
+
+# boggle dice. (Note 'q' should imply 'qu'.)
+dice = (
+    'ednosw', 'aaciot', 'acelrs', 'ehinps',
+    'eefhiy', 'elpstu', 'acdemp', 'gilruw',
+    'egkluy', 'ahmors', 'abilty', 'adenvz',
+    'bfiorx', 'dknotu', 'abjmoq', 'egintv',
+)
 
 def new_board():
     board = []
-    for die in const.dice:
+    for die in dice:
         board.append(random.choice(die))
     random.shuffle(board)
     return board
@@ -19,18 +50,18 @@ def make_index(board):
     index = {}
     for letter in string.ascii_lowercase:
         index[letter] = []
-    for position,letter in enumerate(board):
-        index[letter].append(position)
+    for i,letter in enumerate(board):
+        index[letter].append(i)
     return index
 
 def search(word, index, path):
     if not word:
         return path
-    for pos in index[word[0]]:
-        if not path \
-           or pos in const.adjacent[path[-1]] \
-           and pos not in path:
-            found = search(word[1:], index, path+[pos])
+    letter = word[0]
+    subword = word[1:]
+    for i in index[letter]:
+        if not path or (i in adjacent[path[-1]] and i not in path):
+            found = search(subword, index, path + [i])
             if found:
                 return found
     return None
