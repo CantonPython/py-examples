@@ -28,21 +28,22 @@ adjacent = {
 }
 
 # boggle dice. (Note 'q' should imply 'qu'.)
-dice = (
+dice = [
     'ednosw', 'aaciot', 'acelrs', 'ehinps',
     'eefhiy', 'elpstu', 'acdemp', 'gilruw',
     'egkluy', 'ahmors', 'abilty', 'adenvz',
     'bfiorx', 'dknotu', 'abjmoq', 'egintv',
-)
+]
 
 def new_board():
+    random.shuffle(dice)
     board = []
-    for die in dice:
-        board.append(random.choice(die))
-    random.shuffle(board)
+    for d in dice:
+        board.append(random.choice(d))
     return board
 
 def show(board):
+    # assumes 4x4
     for i in range(0, 16, 4):
         print(' '.join(board[i:i+4]))
 
@@ -54,26 +55,36 @@ def make_index(board):
         index[letter].append(i)
     return index
 
-def search(word, index, path):
+def find_word(index, word):
+    assert(word)
+    first,rest = word[0],word[1:]
+    for i in index[first]:
+        found = find_subword(index, [i], rest)
+        if found:
+            return found
+    return None
+
+def find_subword(index, path, word):
+    assert(path)
     if not word:
         return path
-    letter = word[0]
-    subword = word[1:]
-    for i in index[letter]:
-        if not path or (i in adjacent[path[-1]] and i not in path):
-            found = search(subword, index, path + [i])
+    tail = path[-1]
+    first,rest = word[0],word[1:]
+    for i in index[first]:
+        if i in adjacent[tail] and i not in path:
+            found = find_subword(index, path+[i], rest)
             if found:
                 return found
     return None
 
 def solve(board):
+    solution = {}
     index = make_index(board)
-    found = {}
     for word in words.dictionary:
-        path = search(word, index, [])
+        path = find_word(index, word)
         if path:
-            found[word] = path
-    return found
+            solution[word] = path
+    return solution
 
 if __name__ == '__main__':
     board = new_board()
