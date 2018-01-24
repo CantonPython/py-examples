@@ -27,7 +27,7 @@ for trial in range(20, 0, -1):
             hits += 'x'
         elif d in code:
             misses += 'o'
-    print(''.join((hits, misses)))
+    print(' '*12 + ''.join((hits, misses)))
 
 if guess == code:
     print("Success")
