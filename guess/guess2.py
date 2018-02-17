@@ -57,7 +57,6 @@ def main():
             if not question_prompt("Play again? "):
                 raise QuitGame
     except QuitGame:
-        print()
         print("Thanks for playing.")
 
 main()
