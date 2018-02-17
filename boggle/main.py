@@ -21,11 +21,12 @@ def find_word(index, word):
 def find_subword(index, path, word):
     if not word:
         return path
-    tail = path[-1]
     first = word[0]
     rest = word[1:]
+    tail = path[-1]
+    adjacent = boggle.adjacent[tail]
     for i in index[first]:
-        if i in boggle.adjacent[tail] and i not in path:
+        if i in adjacent and i not in path:
             found = find_subword(index, path+[i], rest)
             if found:
                 return found
