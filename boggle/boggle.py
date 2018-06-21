@@ -36,12 +36,20 @@ class Boggle:
         15: (10, 11, 14),
     }
 
-    def __init__(self):
+    def __init__(self, dictionary='words.txt'):
         """Create a new board."""
-        self.roll_dice()
-        self.make_index()
+        self.dictionary = dictionary
+        self.shake()
 
-    def roll_dice(self):
+    def __repr__(self):
+        """Text representation of the board."""
+        rows = []
+        for i in range(0, 16, 4): # assume 4x4
+            row = self.board[i:i+4]
+            rows.append(' '.join(row))
+        return "\n".join(rows)
+
+    def shake(self):
         """Roll the dice to make a new random board."""
         dice = self.DICE[:]
         random.shuffle(dice)
@@ -49,8 +57,9 @@ class Boggle:
         for die in dice:
             letter = random.choice(die)
             self.board.append(letter)
+        self._build_index()
 
-    def make_index(self):
+    def _build_index(self):
         """Generate the index table for find_word."""
         self.index = {}
         for letter in string.ascii_lowercase:
@@ -58,25 +67,17 @@ class Boggle:
         for i,letter in enumerate(self.board):
             self.index[letter].append(i)
 
-    def __repr__(self):
-        """Text representation of the board."""
-        rows = []
-        for i in range(0, 16, 4):
-            row = self.board[i:i+4]
-            rows.append(' '.join(row))
-        return "\n".join(rows)
-
     def find_word(self, word):
         """Find the word on the board if it exists."""
         first = word[0]
         rest = word[1:]
         for i in self.index[first]:
-            found = self.find_subword([i], rest)
+            found = self._find_subword([i], rest)
             if found:
                 return found
         return None
 
-    def find_subword(self, path, word):
+    def _find_subword(self, path, word):
         """Find the remaining letters of a word on the board."""
         if not word:
             return path
@@ -86,7 +87,7 @@ class Boggle:
         adjacent = self.ADJACENT[tail]
         for i in self.index[first]:
             if i in adjacent and i not in path:
-                found = self.find_subword(path+[i], rest)
+                found = self._find_subword(path+[i], rest)
                 if found:
                     return found
         return None
@@ -94,12 +95,12 @@ class Boggle:
     def solve(self):
         """Find all the words on the board."""
         self.solution = {}
-        with open('words.txt') as words:
+        with open(self.dictionary) as words:
             for word in words:
                 word = word.strip()
                 path = self.find_word(word)
                 if path:
-                    self.solution[word] = path
+                    self.solution[word] = tuple(path)
         return self.solution
 
 def main():
